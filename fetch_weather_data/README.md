@@ -18,7 +18,7 @@ This project compares weather forecasts with real-time observations at your loca
 2. Create a virtual environment and activate it
     python -m venv venv
     source venv/bin/activate  # macOS/Linux
-    # OR
+    ### OR
     venv\Scripts\activate     # Windows
 
 3. Install required packages
