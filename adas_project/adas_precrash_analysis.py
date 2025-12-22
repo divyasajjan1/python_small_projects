@@ -62,3 +62,30 @@ print(df['ADAS'].value_counts())
 
 # Optional: save the result
 df.to_csv("adas_flagged_output.csv", index=False)
+
+# Calculating the autopilot active time leading to the crash time. 
+
+crash_time = pd.Timestamp("2024-10-24 00:19:03.578")
+
+pre_crash_df = df[df["DATE (UTC)"] <= crash_time]
+
+pre_crash_df["autopilot_active"] = (
+    pre_crash_df["Autopilot System State"].isin(autopilot_active)
+)
+
+last_active_idx = pre_crash_df[pre_crash_df["autopilot_active"]].index.max()
+autopilot_segment = pre_crash_df.loc[:last_active_idx]
+
+# Find where Autopilot switches from inactive → active
+transition_rows = autopilot_segment[
+    (autopilot_segment["autopilot_active"]) &
+    (~autopilot_segment["autopilot_active"].shift(1, fill_value=False))
+]
+autopilot_start_time = transition_rows["DATE (UTC)"].iloc[-1]
+
+duration_seconds = (crash_time - autopilot_start_time).total_seconds()
+
+print("Crash time:", crash_time)
+print("Autopilot started at:", autopilot_start_time)
+print("Autopilot active duration (seconds):", duration_seconds)
+
