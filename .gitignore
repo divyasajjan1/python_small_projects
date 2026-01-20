@@ -5,6 +5,10 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+*.pdf
+data/
+chroma_db/
+
 # C extensions
 *.so
 
